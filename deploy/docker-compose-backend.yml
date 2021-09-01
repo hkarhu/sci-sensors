@@ -1,0 +1,8 @@
+services:
+  backend:
+    build: ".."
+    ports:
+      - "888:3000"
+    depends_on:
+      - db
+    restart: always

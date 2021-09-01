@@ -1,0 +1,38 @@
+# INSTALL DOCKER & DOCKER-COMPOSE
+dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+yum install docker-ce docker-ce-cli containerd.io
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /bin/docker-compose
+chmod 755 /bin/docker-compose
+> src:
+> - https://docs.docker.com/engine/install/centos/
+> - https://docs.docker.com/compose/install/
+
+# ACQUIRE CODE
+cd /opt/
+git clone "https://github.com/irah-000/sci-sensors"
+cd sci-sensors
+
+#
+# DOCKER-COMPOSE COMMAND PREFIX
+#
+! [CMD] = docker-compose --project-name sci-sensors $(find -iname 'docker-compose-*' | sed -e 's/^/-f /')
+
+
+# START APPLICATION
+cd deploy
+[CMD] up --detach
+
+#
+# TROUBLESHOOTING
+#
+
+## list docker artifacts
+docker container ls --all; docker image ls --all; docker network ls
+
+## remove all docker artifacts (be careful)
+docker system prune --all --force
+
+## exec command inside named container started by 'docker-compose up'
+[CMD] exec db bash
+

@@ -1,0 +1,9 @@
+services:
+  db:
+    image: "docker.io/mariadb:latest"
+    restart: always
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+    volumes:
+      - "/opt/scisense-mariadb-volume:/var/lib/mysql"
+      - "./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql"
