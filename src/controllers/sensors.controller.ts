@@ -27,7 +27,8 @@ export class SensorsController {
     public sensorRepository : SensorRepository,
   ) {}
 
-  @authenticate('jwt') 
+//  @authenticate('jwt') 
+  @authenticate.skip()
   @post('/sensors')
   @response(200, {
     description: 'Sensor model instance',
@@ -49,6 +50,7 @@ export class SensorsController {
     return this.sensorRepository.create(sensor);
   }
 
+  @authenticate.skip()
   @get('/sensors/count')
   @response(200, {
     description: 'Sensor model count',
