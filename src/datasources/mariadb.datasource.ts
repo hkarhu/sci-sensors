@@ -5,7 +5,7 @@ const config = {
   name: 'mariadb',
   connector: 'mysql',
   url: '',
-  host: 'localhost',
+  host: 'db',
   port: 3306,
   user: 'scisense',
   password: 'scisense',

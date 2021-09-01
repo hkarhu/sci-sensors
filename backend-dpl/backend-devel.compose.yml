@@ -1,0 +1,14 @@
+services:
+  backend:
+    build:
+      context: ".."
+      dockerfile: Dockerfile-devel
+    ports:
+      - "888:3000"
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - type: bind
+        source: ..
+        target: /app/

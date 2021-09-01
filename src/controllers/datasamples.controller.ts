@@ -25,8 +25,7 @@ export class DatasamplesController {
     @repository(DatasampleRepository)
     public datasampleRepository : DatasampleRepository,
   ) {}
-
-  /*
+  
   @post('/datasamples')
   @response(200, {
     description: 'Datasample model instance',
@@ -61,7 +60,7 @@ export class DatasamplesController {
   ): Promise<Count> {
     return this.datasampleRepository.count(where);
   }
-*/
+
   @get('/datasamples')
   @response(200, {
     description: 'Array of Datasample model instances',
