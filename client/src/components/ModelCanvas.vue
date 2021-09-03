@@ -6,7 +6,9 @@
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
 //import { SceneUtils } from 'three/examples/jsm/utils/SceneUtils.js';
 //import {
 //    BloomEffect,
@@ -22,27 +24,43 @@ export default {
         return {}
     },
     mounted: function() {
-
+        
         this.scene = new THREE.Scene()
+        this.scene.fog = new THREE.FogExp2(0, 0.001)
+        
         // const composer = new THREE.EffectComposer(new WebGLRenderer())
         // const effectPass = new THREE.EffectPass(camera, new BloomEffect())
         this.camera = new THREE.PerspectiveCamera(
-            75,
+            50,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
         )
         
+        /*
+        this.gradientMap = new THREE.DataTexture( colors, colors.length, 1, THREE.LuminanceFormat );
+		gradientMap.minFilter = THREE.NearestFilter;
+		gradientMap.magFilter = THREE.NearestFilter;
+		gradientMap.generateMipmaps = false;
+		*/
+        
         let data_canvas = document.querySelector('#three_canvas');
         
         try {
             this.renderer = new THREE.WebGLRenderer({ canvas: data_canvas, alpha: true, antialias: false });
+            this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            this.renderer.toneMappingExposure = 1.5;
+            this.renderer.toneMappingWhitePoint = 1.0;            
         } catch ( e ) {
             this.renderer = null;
             throw new Error("No renderer!");
         }   
+
+        this.effect = new OutlineEffect( this.renderer,  { defaultThickness: 0.006, defaultColor: [ 0, 0, 0 ], defaultAlpha: 1, defaultKeepAlive: true });
         
         this.light = new THREE.DirectionalLight('hsl(0, 100%, 100%)')
+        
+        this.ambient_light = new THREE.AmbientLight( 0x999999 );
         
         //Target
         //this.target_graphic = new THREE.Line( new THREE.RingGeometry( 1, 5, 32, 1, 1 ), new THREE.LineBasicMaterial( { color: 0xaaaaaa, linewidth: 3.0 }));
@@ -54,7 +72,14 @@ export default {
         this.target_line_geom_buffer = new THREE.BufferGeometry()
         this.target_line_geom_buffer.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array(9), 3 ) );
         //.setFromPoints( new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,0) );
-        this.target_line = new THREE.Line( this.target_line_geom_buffer, new THREE.LineBasicMaterial( { color: 0xaaaaaa, linewidth: 3.0 }));
+        let line_material = new THREE.LineBasicMaterial( {
+            color: 0x229900,
+            linewidth: 3,
+            linecap: 'round', //ignored by WebGLRenderer
+            linejoin:  'round' //ignored by WebGLRenderer
+        });
+        
+        this.target_line_inner = new THREE.Line( this.target_line_geom_buffer, line_material);
         
         let uniforms = {
             time: { type: "f", value: 1.0 },
@@ -79,16 +104,18 @@ export default {
     
         });
         
-        this.scene.add(this.camera)
+        this.scene.add(this.camera)        
         this.scene.add(this.light)
+        this.scene.add(this.ambient_light)
         this.scene.add(this.target_graphic)
-        this.scene.add(this.target_line)
-        this.renderer.shadowMap.enabled = true
+        this.scene.add(this.target_line_inner)
+        
+        this.renderer.shadowMap.enabled = false
         this.light.position.set(0, 0, 10)
-        this.camera.position.z = 120;
-        this.camera.position.y = 15;
+        this.camera.position.z = 60;
+        this.camera.position.y = 30;
         //this.scene.background = new THREE.Color('hsl(0, 100%, 100%)')
-        this.scene.background = new THREE.Color("#000");
+        this.scene.background = new THREE.Color("#241");
         this.controls = new OrbitControls(this.camera, this.renderer.domElement)
         this.controls.rotateSpeed = 1.0
         this.controls.zoomSpeed = 1
@@ -106,20 +133,25 @@ export default {
         animate: function() {
             requestAnimationFrame(this.animate)
             
-            this.light.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z)
+            let cpos = this.camera.position;
+            
+            this.light.position.set(cpos.x, cpos.y, cpos.z)
             
             this.controls.update()
             
             if(this.selected_target){
                 
                 this.target_graphic.visible = true;
-                this.target_line.visible = true;
+                this.target_line_inner.visible = true;
                 let tpos = this.selected_target.position;
-                //let cpos = this.camera.position;
                 
-                let lposa = this.target_line.geometry.attributes.position.array;
                 
-                let y = (this.selected_target_element.offsetTop + this.selected_target_element.offsetHeight/16)/document.querySelector('.sensor_list').offsetHeight;
+                let lposa = this.target_line_inner.geometry.attributes.position.array;
+                //let lposa = this.target_line_outer.geometry.attributes.position.array;
+                
+                let oh = document.querySelector('.sensor_list').offsetHeight;
+                
+                let y = (this.selected_target_element.offsetTop + this.selected_target_element.offsetHeight/16)/oh - document.querySelector('.sensor_list').scrollTop/oh;
                 
                 const cvec = new THREE.Vector3(1, (1-y*2), 0);
                 const bvec = new THREE.Vector3(0.75, (1-y*2), 0);
@@ -144,15 +176,15 @@ export default {
                 lposa[6] = tpos.x;
                 lposa[7] = tpos.y;
                 lposa[8] = tpos.z;
-                this.target_line.geometry.attributes.position.needsUpdate = true;
+                this.target_line_inner.geometry.attributes.position.needsUpdate = true;
                 this.target_graphic.position.set(tpos);
             } else {
                 this.target_graphic.visible = false;
-                this.target_line.visible = false;
+                this.target_line_inner.visible = false;
             }
             
-            
-            this.renderer.render(this.scene, this.camera)
+            //this.renderer.render(this.scene, this.camera)
+            this.effect.render(this.scene, this.camera)
         },
         onWindowResize: function() {
             let canvas = document.getElementById('three_canvas')
@@ -165,11 +197,17 @@ export default {
             let _self = this;
             this.gltf_loader.load( model_url, function ( gltf ) {
                 _self.model = gltf.scene;
+                /*
+                let mat_toon = new THREE.MeshToonMaterial( {
+					color: 0xFFFFFF,
+					gradientMap: this.gradientMap
+                });
+                */
                 //let mat_wireframe = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: true});
                 //let mat_lambert = new THREE.MeshLambertMaterial({color: 0xffffff, shading: THREE.FlatShading});
                 //_self.model.children[3].children[0].material = new THREE.LineBasicMaterial( {color: 0xffffff} );
                 //let mesh = SceneUtils.createMultiMaterialObject( _self.model.geometry, [mat_wireframe] );
-                //_self.model.children[3].children.forEach(o => o.material = _self.shader_material)
+                //_self.model.children[3].children.forEach(o => o.material = mat_toon)
                 _self.scene.add(_self.model);
             }, undefined, function ( error ) {
                 console.error( error );
@@ -191,7 +229,7 @@ export default {
 <style>
 #three_canvas {
 	width: 100%;
-	height: 100%;
+	height: 996px;
 	background-color: #F0F;
 }
 </style>

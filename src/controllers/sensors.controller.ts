@@ -62,6 +62,7 @@ export class SensorsController {
     return this.sensorRepository.count(where);
   }
 
+  @authenticate.skip()
   @get('/sensors')
   @response(200, {
     description: 'Array of Sensor model instances',
@@ -80,7 +81,8 @@ export class SensorsController {
     return this.sensorRepository.find(filter);
   }
 
-  @authenticate('jwt') 
+  @authenticate.skip()
+//@authenticate('jwt') 
   @patch('/sensors')
   @response(200, {
     description: 'Sensor PATCH success count',

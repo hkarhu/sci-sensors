@@ -42,12 +42,14 @@
                                 "%": { auto: true },
                                 "kPa": { auto: true }
                             },
+                            legend: {show: false},
                             series: [
                                 {
+                                    show: false,
                                     label: "Time",
                                     scale: "T",
                                     value: (self, v) => v == null ? "-" : new Date(v*1e3),
-                                    key: 'date'
+                                    key: 'date',
                                 },{
                                     show: true,
                                     spanGaps: true,
@@ -55,7 +57,6 @@
                                     scale: "C",
                                     value: (self, v) => v == null ? "-" : v.toFixed(1) + " C",
                                     stroke: "rgba(255, 0, 0, 1)",
-
                                 },{
                                     show: true,
                                     spanGaps: true,
@@ -63,7 +64,6 @@
                                     scale: "rel%",
                                     value: (self, v) => v == null ? "-" : v.toFixed(1) + " rel%",
                                     stroke: "rgba(128, 255, 128, 1)",
-
                                 },{
                                     show: true,
                                     spanGaps: true,
@@ -76,14 +76,14 @@
                             axes: [
                                 { 
                                     scale: "T",
-                                    grid: {show: true, stroke: "rgba(0, 0, 0, 0.25)", width: 1},
+                                    grid: {show: true, stroke: "rgba(255, 255, 255, 0.1)", width: 1},
                                     space: 40,
                                     stroke: "rgba(255, 255, 255, 1)",
                                     font: "10px Monospace",
                                     ticks: {
                                         show: true,
-                                        stroke: "#000",
-                                        width: 3,
+                                        stroke: "#FFF",
+                                        width: 2,
                                         dash: [],
                                         size: 4,
                                     },

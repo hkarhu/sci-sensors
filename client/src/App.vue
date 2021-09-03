@@ -2,7 +2,7 @@
     <div class="container">
         <div class="header">
             <router-link to="/">
-			<h1>Sensor Data Visualizer</h1>
+			<h1>Botania Sensornet</h1>
 			</router-link>
         </div>
         
@@ -27,12 +27,12 @@ body {
 	font-family: inconsolata, monospace;
 	font-weight: bold;
 	text-shadow: 0.142em 0.142em 0.1em #000;
-	background-color:#333;
-	color: #EEE;
+	background-color:#350;
+	color: #AE2;
 }
 
 a:link,a:visited {
-	color:#fff;
+	color:#AE2;
 	text-decoration:none;
 }
 
@@ -44,7 +44,7 @@ a:link,a:visited {
 
 .header {
 	position: absolute;
-	top: 1em;
+	top: 0.2em;
     width: 100%;
 	margin: auto;
 	z-index: 1;
@@ -55,14 +55,14 @@ a:link,a:visited {
 	margin-left: 1em;
 	bottom: 0.5em;
 	font-size: 1.5em;
-	border-color:#BBB;
+	border-color:#BE0;
 	border-style:solid;
 	border-width: 0 0 0.15em 0;
 }
 
 .main_view {
     display: grid;
-    grid-template-columns: 1fr 0.25fr;
+    grid-template-columns: 1fr 0.5fr;
     grid-gap: 0;
 }
 
@@ -71,7 +71,6 @@ a:link,a:visited {
 }
 
 .footer ul {
-	color:#FFF;
 	list-style-type:none;
 	position:absolute;
 	text-align:right;
