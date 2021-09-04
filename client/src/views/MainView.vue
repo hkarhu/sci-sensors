@@ -8,8 +8,9 @@
             <DatePicker v-model="range" mode="dateTime" is-dark is-range show-weeknumbers @dayclick="onDateRangeChanged" :minute-increment="15" is24hr :popover="{ visibility: 'click' }">
             <template v-slot="{ inputValue, togglePopover }"> <div class="date-picker-wrap"><button :value="inputValue" v-on:click="togglePopover" class="datepicker-input" placeholder="RangeSelect" readonly> Set timespan</button></div> </template>
             </DatePicker>
-            <!-- {{ range.start }} - {{ range.end }} -->
         </div>
+        
+        <!-- {{ range.start }} - {{ range.end }} -->
         
         <div class="sensor_list">
             <vue-collapsible-panel-group style="">
@@ -84,8 +85,9 @@
 
 <style scoped>
     div.vcpg {
+        color: #FFF !important;
         --base-color: #000 !important;
-        --border-color: #888 !important;
+        --border-color: #222 !important;
         --bg-color-header: #333 !important;
         --bg-color-header-hover: #000 !important;
         --bg-color-header-active: #000 !important;
@@ -101,7 +103,7 @@
 	width: 100%;
 	z-index: 1;
 	background-color: #000;
-	border-color: #BBB;
+	border-color: #000;
 	border-style: solid;
 	border-width: .25em .0em .25em 0em;
 }
@@ -114,7 +116,7 @@
 
 .sensor_list {
 	background-color: #111;
-	border-color: #BBB;
+	border-color: #000;
 	border-style: solid;
 	border-width: .25em 0em .25em 0em;
 	height: 1000px;
